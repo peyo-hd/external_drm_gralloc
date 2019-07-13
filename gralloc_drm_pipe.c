@@ -114,9 +114,6 @@ static struct pipe_buffer *get_pipe_buffer_locked(struct pipe_manager *pm,
 	memset(&templ, 0, sizeof(templ));
 	templ.format = get_pipe_format(handle->format);
 	templ.bind = get_pipe_bind(handle->usage);
-#ifdef ENABLE_PIPE_VC4
-	templ.bind &= ~(PIPE_BIND_SHARED|PIPE_BIND_SCANOUT);
-#endif
 	templ.target = PIPE_TEXTURE_2D;
 
 	if (templ.format == PIPE_FORMAT_NONE ||
