@@ -201,6 +201,11 @@ LOCAL_SHARED_LIBRARIES += \
 LOCAL_MODULE := gralloc.drm
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_RELATIVE_PATH := hw
+
+LOCAL_CFLAGS += \
+	-Wno-unused-variable \
+	-Wno-unused-parameter
+
 include $(BUILD_SHARED_LIBRARY)
 
 endif # DRM_GPU_DRIVERS=prebuilt
