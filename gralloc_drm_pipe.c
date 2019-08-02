@@ -309,6 +309,10 @@ static void pipe_destroy(struct gralloc_drm_drv_t *drv)
 /* for vc4 */
 #include "vc4/drm/vc4_drm_public.h"
 #endif
+#ifdef ENABLE_PIPE_V3D
+/* for v3d */
+#include "v3d/drm/v3d_drm_public.h"
+#endif
 /* for debug */
 #include "target-helpers/inline_debug_helper.h"
 
@@ -357,6 +361,11 @@ static int pipe_init_screen(struct pipe_manager *pm)
 #ifdef ENABLE_PIPE_VC4
 	if (strcmp(pm->driver, "vc4") == 0) {
 		screen = vc4_drm_screen_create(pm->fd);
+	}
+#endif
+#ifdef ENABLE_PIPE_V3D
+	if (strcmp(pm->driver, "v3d") == 0) {
+		screen = v3d_drm_screen_create(pm->fd);
 	}
 #endif
 
@@ -456,6 +465,10 @@ static int pipe_find_driver(struct pipe_manager *pm, const char *name)
 		}
 		if (strcmp(name, "vc4") == 0) {
 			driver = "vc4";
+			err = 0;
+		}
+		if (strcmp(name, "v3d") == 0) {
+			driver = "v3d";
 			err = 0;
 		}
 	}
