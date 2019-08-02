@@ -36,7 +36,7 @@
 
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
-#define GRALLOC_DRM_DEVICE "/dev/dri/card0"
+#define GRALLOC_DRM_DEVICE "/dev/dri/card1"
 
 static int32_t gralloc_drm_pid = 0;
 
