@@ -160,8 +160,7 @@ ifneq ($(filter vc4, $(DRM_GPU_DRIVERS)),)
 LOCAL_CFLAGS += -DENABLE_PIPE_VC4
 LOCAL_STATIC_LIBRARIES += \
 	libmesa_winsys_vc4 \
-	libmesa_pipe_vc4 \
-	libmesa_st_mesa
+	libmesa_pipe_vc4
 endif
 
 LOCAL_STATIC_LIBRARIES += \
