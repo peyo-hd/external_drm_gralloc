@@ -166,7 +166,8 @@ endif
 ifneq ($(filter v3d, $(DRM_GPU_DRIVERS)),)
 LOCAL_CFLAGS += -DENABLE_PIPE_V3D
 LOCAL_STATIC_LIBRARIES += \
-	libmesa_winsys_v3d
+	libmesa_winsys_v3d \
+	libmesa_pipe_v3d
 endif
 
 LOCAL_STATIC_LIBRARIES += \
