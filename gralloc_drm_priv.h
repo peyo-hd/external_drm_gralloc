@@ -69,20 +69,6 @@ struct gralloc_drm_t {
 	struct gralloc_drm_plane_t *planes;
 };
 
-struct drm_gralloc1_module_t {
-    struct hw_module_t common;
-    int (*perform)(struct drm_gralloc1_module_t const* module,
-            int operation, ... );
-    int (*lock_ycbcr)(struct drm_gralloc1_module_t const* module,
-            buffer_handle_t handle, int usage,
-            int l, int t, int w, int h,
-            struct android_ycbcr *ycbcr);
-    int (*unlock)(struct drm_gralloc1_module_t const* module,
-            buffer_handle_t handle);
-    pthread_mutex_t mutex;
-    struct gralloc_drm_t *drm;
-};
-
 struct drm_module_t {
 	gralloc_module_t base;
 
