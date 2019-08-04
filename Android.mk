@@ -156,7 +156,7 @@ LOCAL_C_INCLUDES += \
 	external/mesa/src/gallium/drivers/svga/include
 endif
 
-ifneq ($(filter vc4, $(DRM_GPU_DRIVERS)),)
+ifneq ($(filter v3d, $(DRM_GPU_DRIVERS)),)
 LOCAL_CFLAGS += -DENABLE_PIPE_VC4
 LOCAL_STATIC_LIBRARIES += \
 	libmesa_winsys_vc4 \

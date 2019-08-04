@@ -67,6 +67,10 @@ struct gralloc_drm_t {
 	/* plane support */
 	drmModePlaneResPtr plane_resources;
 	struct gralloc_drm_plane_t *planes;
+
+	/* framebuffer device*/
+	int fd0;
+	struct gralloc_drm_drv_t *drv0;
 };
 
 struct drm_gralloc1_module_t {

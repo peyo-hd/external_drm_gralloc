@@ -36,6 +36,7 @@
 
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
+#define GRALLOC_FB_DEVICE "/dev/dri/card0"
 #define GRALLOC_DRM_DEVICE "/dev/dri/card1"
 
 static int32_t gralloc_drm_pid = 0;
@@ -121,6 +122,15 @@ struct gralloc_drm_t *gralloc_drm_create(void)
 		return NULL;
 	}
 
+	drm->fd0 = open(GRALLOC_FB_DEVICE, O_RDWR);
+	if (drm->fd0 < 0) {
+		ALOGE("failed to open %s", GRALLOC_FB_DEVICE);
+	}
+	drm->drv0 = init_drv_from_fd(drm->fd0);
+	if (!drm->drv0) {
+		ALOGE("failed to init %s", GRALLOC_FB_DEVICE);
+	}
+
 	return drm;
 }
 
@@ -132,6 +142,9 @@ void gralloc_drm_destroy(struct gralloc_drm_t *drm)
 	if (drm->drv)
 		drm->drv->destroy(drm->drv);
 	close(drm->fd);
+	if (drm->drv0)
+		drm->drv0->destroy(drm->drv0);
+	close(drm->fd0);
 	free(drm);
 }
 
@@ -164,7 +177,10 @@ static struct gralloc_drm_bo_t *validate_handle(buffer_handle_t _handle,
 
 		/* create the struct gralloc_drm_bo_t locally */
 		if (handle->name)
-			bo = drm->drv->alloc(drm->drv, handle);
+			if (handle->usage & GRALLOC_USAGE_HW_FB)
+			    bo = drm->drv0->alloc(drm->drv0, handle);
+			else
+				bo = drm->drv->alloc(drm->drv, handle);
 		else /* an invalid handle */
 			bo = NULL;
 		if (bo) {
@@ -253,7 +269,10 @@ struct gralloc_drm_bo_t *gralloc_drm_bo_create(struct gralloc_drm_t *drm,
 	if (!handle)
 		return NULL;
 
-	bo = drm->drv->alloc(drm->drv, handle);
+	if (usage & GRALLOC_USAGE_HW_FB)
+	    bo = drm->drv0->alloc(drm->drv0, handle);
+	else
+		bo = drm->drv->alloc(drm->drv, handle);
 	if (!bo) {
 		free(handle);
 		return NULL;
@@ -370,8 +389,11 @@ int gralloc_drm_bo_lock(struct gralloc_drm_bo_t *bo,
 		     GRALLOC_USAGE_SW_READ_MASK)) {
 		/* the driver is supposed to wait for the bo */
 		int write = !!(usage & GRALLOC_USAGE_SW_WRITE_MASK);
-		int err = bo->drm->drv->map(bo->drm->drv, bo,
-				x, y, w, h, write, addr);
+		int err;
+		if (bo->handle->usage & GRALLOC_USAGE_HW_FB)
+			err = bo->drm->drv0->map(bo->drm->drv0, bo, x, y, w, h, write, addr);
+		else
+			err = bo->drm->drv->map(bo->drm->drv, bo, x, y, w, h, write, addr);
 		if (err)
 			return err;
 	}
@@ -396,8 +418,12 @@ void gralloc_drm_bo_unlock(struct gralloc_drm_bo_t *bo)
 	if (!bo->lock_count)
 		return;
 
-	if (mapped)
-		bo->drm->drv->unmap(bo->drm->drv, bo);
+	if (mapped) {
+		if (bo->handle->usage & GRALLOC_USAGE_HW_FB)
+			bo->drm->drv0->unmap(bo->drm->drv0, bo);
+		else
+			bo->drm->drv->unmap(bo->drm->drv, bo);
+	}
 
 	bo->lock_count--;
 	if (!bo->lock_count)
