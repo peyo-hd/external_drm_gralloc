@@ -28,6 +28,8 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
+#include <linux/fb.h>
+
 #include "gralloc_drm_handle.h"
 
 #ifdef __cplusplus
@@ -69,11 +71,23 @@ struct gralloc_drm_t {
 	struct gralloc_drm_plane_t *planes;
 };
 
+struct framebuffer_output_t
+{
+	struct fb_var_screeninfo info;
+	struct fb_fix_screeninfo finfo;
+	float xdpi;
+	float ydpi;
+	float fps;
+	uint64_t base __attribute__((aligned(8)));
+};
+
 struct drm_module_t {
 	gralloc_module_t base;
 
 	pthread_mutex_t mutex;
 	struct gralloc_drm_t *drm;
+
+	struct framebuffer_output_t *framebuffer;
 };
 
 struct gralloc_drm_drv_t {
