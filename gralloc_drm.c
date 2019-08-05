@@ -36,8 +36,11 @@
 
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
+#ifdef ENABLE_PIPE_V3D
+#define GRALLOC_DRM_DEVICE "/dev/dri/card1"
+#else
 #define GRALLOC_DRM_DEVICE "/dev/dri/card0"
-
+#endif
 static int32_t gralloc_drm_pid = 0;
 
 /*

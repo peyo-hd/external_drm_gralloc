@@ -28,7 +28,7 @@ radeon_drivers := r300g r600g
 rockchip_drivers := rockchip
 nouveau_drivers := nouveau
 vmwgfx_drivers := vmwgfx
-vc4_drivers := vc4
+vc4_drivers := vc4 v3d
 
 valid_drivers := \
 	prebuilt \
@@ -161,6 +161,13 @@ LOCAL_CFLAGS += -DENABLE_PIPE_VC4
 LOCAL_STATIC_LIBRARIES += \
 	libmesa_winsys_vc4 \
 	libmesa_pipe_vc4
+endif
+
+ifneq ($(filter v3d, $(DRM_GPU_DRIVERS)),)
+LOCAL_CFLAGS += -DENABLE_PIPE_V3D
+LOCAL_STATIC_LIBRARIES += \
+	libmesa_winsys_v3d \
+	libmesa_pipe_v3d
 endif
 
 LOCAL_STATIC_LIBRARIES += \
