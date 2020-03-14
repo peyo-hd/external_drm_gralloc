@@ -356,7 +356,7 @@ static int pipe_init_screen(struct pipe_manager *pm)
 #endif
 #ifdef ENABLE_PIPE_VC4
 	if (strcmp(pm->driver, "vc4") == 0) {
-		screen = vc4_drm_screen_create(pm->fd);
+		screen = vc4_drm_screen_create(pm->fd, NULL);
 	}
 #endif
 
